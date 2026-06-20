@@ -1,0 +1,11 @@
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\bin\Debug\net8.0\DeviceIntelligenceAI.Visualization.deps.json
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\bin\Debug\net8.0\DeviceIntelligenceAI.Visualization.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\bin\Debug\net8.0\DeviceIntelligenceAI.Visualization.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\DeviceIntelligenceAI.Visualization.GeneratedMSBuildEditorConfig.editorconfig
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\DeviceIntelligenceAI.Visualization.AssemblyInfoInputs.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\DeviceIntelligenceAI.Visualization.AssemblyInfo.cs
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\DeviceIntelligenceAI.Visualization.csproj.CoreCompileInputs.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\DeviceIntelligenceAI.Visualization.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\refint\DeviceIntelligenceAI.Visualization.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\DeviceIntelligenceAI.Visualization.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Visualization\obj\Debug\net8.0\ref\DeviceIntelligenceAI.Visualization.dll

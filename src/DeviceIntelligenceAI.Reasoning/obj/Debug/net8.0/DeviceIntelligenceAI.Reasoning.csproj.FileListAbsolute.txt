@@ -1,0 +1,15 @@
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\bin\Debug\net8.0\DeviceIntelligenceAI.Reasoning.deps.json
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\bin\Debug\net8.0\DeviceIntelligenceAI.Reasoning.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\bin\Debug\net8.0\DeviceIntelligenceAI.Reasoning.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\bin\Debug\net8.0\DeviceIntelligenceAI.Graph.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\bin\Debug\net8.0\DeviceIntelligenceAI.Graph.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.csproj.AssemblyReference.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.GeneratedMSBuildEditorConfig.editorconfig
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.AssemblyInfoInputs.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.AssemblyInfo.cs
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.csproj.CoreCompileInputs.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIn.819D122D.Up2Date
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\refint\DeviceIntelligenceAI.Reasoning.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\DeviceIntelligenceAI.Reasoning.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Reasoning\obj\Debug\net8.0\ref\DeviceIntelligenceAI.Reasoning.dll

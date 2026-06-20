@@ -1,0 +1,296 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.McpServer\\DeviceIntelligenceAI.McpServer.csproj": {}
+  },
+  "projects": {
+    "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj",
+        "projectName": "DeviceIntelligenceAI.Graph",
+        "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj",
+        "packagesPath": "C:\\Users\\ravibh\\.nuget\\packages\\",
+        "outputPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ravibh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Data.Sqlite": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Ingestion\\DeviceIntelligenceAI.Ingestion.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Ingestion\\DeviceIntelligenceAI.Ingestion.csproj",
+        "projectName": "DeviceIntelligenceAI.Ingestion",
+        "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Ingestion\\DeviceIntelligenceAI.Ingestion.csproj",
+        "packagesPath": "C:\\Users\\ravibh\\.nuget\\packages\\",
+        "outputPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Ingestion\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ravibh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj": {
+                "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.McpServer\\DeviceIntelligenceAI.McpServer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.McpServer\\DeviceIntelligenceAI.McpServer.csproj",
+        "projectName": "DeviceIntelligenceAI.McpServer",
+        "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.McpServer\\DeviceIntelligenceAI.McpServer.csproj",
+        "packagesPath": "C:\\Users\\ravibh\\.nuget\\packages\\",
+        "outputPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.McpServer\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ravibh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj": {
+                "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj"
+              },
+              "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Ingestion\\DeviceIntelligenceAI.Ingestion.csproj": {
+                "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Ingestion\\DeviceIntelligenceAI.Ingestion.csproj"
+              },
+              "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Reasoning\\DeviceIntelligenceAI.Reasoning.csproj": {
+                "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Reasoning\\DeviceIntelligenceAI.Reasoning.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Reasoning\\DeviceIntelligenceAI.Reasoning.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Reasoning\\DeviceIntelligenceAI.Reasoning.csproj",
+        "projectName": "DeviceIntelligenceAI.Reasoning",
+        "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Reasoning\\DeviceIntelligenceAI.Reasoning.csproj",
+        "packagesPath": "C:\\Users\\ravibh\\.nuget\\packages\\",
+        "outputPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Reasoning\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ravibh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj": {
+                "projectPath": "C:\\Windows AI APIs\\DeviceIntelligenceAI\\src\\DeviceIntelligenceAI.Graph\\DeviceIntelligenceAI.Graph.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.315/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

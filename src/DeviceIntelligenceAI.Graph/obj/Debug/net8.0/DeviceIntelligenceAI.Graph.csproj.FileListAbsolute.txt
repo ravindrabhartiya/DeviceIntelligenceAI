@@ -1,0 +1,12 @@
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.csproj.AssemblyReference.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.GeneratedMSBuildEditorConfig.editorconfig
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.AssemblyInfoInputs.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.AssemblyInfo.cs
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.csproj.CoreCompileInputs.cache
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\bin\Debug\net8.0\DeviceIntelligenceAI.Graph.deps.json
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\bin\Debug\net8.0\DeviceIntelligenceAI.Graph.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\bin\Debug\net8.0\DeviceIntelligenceAI.Graph.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\refint\DeviceIntelligenceAI.Graph.dll
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\DeviceIntelligenceAI.Graph.pdb
+C:\Windows AI APIs\DeviceIntelligenceAI\src\DeviceIntelligenceAI.Graph\obj\Debug\net8.0\ref\DeviceIntelligenceAI.Graph.dll
