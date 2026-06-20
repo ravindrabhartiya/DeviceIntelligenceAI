@@ -72,17 +72,8 @@ Console.ResetColor();
 
 // === Generate Summary with Reasoning Engine ===
 Console.Write("  [5/5] Generating health summary... ");
-ILanguageModel languageModel;
-if (WindowsLanguageModel.IsAvailable())
-{
-    languageModel = await WindowsLanguageModel.CreateAsync();
-    Console.Write("(Phi Silica) ");
-}
-else
-{
-    languageModel = new MockLanguageModel();
-    Console.Write("(Mock) ");
-}
+var (languageModel, backend) = await LanguageModelFactory.CreateAsync();
+Console.Write($"({backend}) ");
 var reasoning = new ReasoningEngine(index, languageModel, store);
 var summaryResult = await reasoning.GetHealthSummaryAsync();
 Console.ForegroundColor = ConsoleColor.Green;

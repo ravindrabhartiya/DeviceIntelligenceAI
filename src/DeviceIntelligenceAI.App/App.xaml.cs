@@ -44,9 +44,8 @@ public partial class App : Application
         GraphStore = new GraphStore(dbPath);
         SemanticIndex = SemanticIndexFactory.Create(forceLocal: !WindowsSemanticIndex.IsAvailable());
 
-        ILanguageModel llm = WindowsLanguageModel.IsAvailable()
-            ? WindowsLanguageModel.CreateAsync().GetAwaiter().GetResult()
-            : new MockLanguageModel();
+        var (llm, backend) = LanguageModelFactory.Create();
+        System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] LLM backend: {backend}");
 
         ReasoningEngine = new ReasoningEngine(SemanticIndex, llm, GraphStore);
     }
