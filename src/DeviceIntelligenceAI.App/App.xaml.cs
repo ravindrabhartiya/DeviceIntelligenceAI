@@ -25,10 +25,14 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        InitializeServices();
+        // Show window immediately, initialize services in background
+        InitializeCoreServices();
 
         _window = new MainWindow();
         _window.Activate();
+
+        // Initialize LLM async (may involve HTTP calls to Ollama)
+        _ = InitializeLlmAsync();
 
         // Check if launched via App Action
         var launchArgs = args.Arguments;
@@ -38,16 +42,27 @@ public partial class App : Application
         }
     }
 
-    private void InitializeServices()
+    private void InitializeCoreServices()
     {
         var dbPath = GetDatabasePath();
         GraphStore = new GraphStore(dbPath);
         SemanticIndex = SemanticIndexFactory.Create(forceLocal: !WindowsSemanticIndex.IsAvailable());
+    }
 
-        var (llm, backend) = LanguageModelFactory.Create();
-        System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] LLM backend: {backend}");
-
-        ReasoningEngine = new ReasoningEngine(SemanticIndex, llm, GraphStore);
+    private async Task InitializeLlmAsync()
+    {
+        try
+        {
+            var (llm, backend) = await LanguageModelFactory.CreateAsync();
+            System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] LLM backend: {backend}");
+            ReasoningEngine = new ReasoningEngine(SemanticIndex!, llm, GraphStore!);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] LLM init failed: {ex.Message}");
+            var mock = new MockLanguageModel();
+            ReasoningEngine = new ReasoningEngine(SemanticIndex!, mock, GraphStore!);
+        }
     }
 
     private void HandleAppAction(string arguments)
