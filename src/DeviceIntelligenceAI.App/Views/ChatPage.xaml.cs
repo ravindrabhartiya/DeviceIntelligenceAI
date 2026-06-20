@@ -1,6 +1,8 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace DeviceIntelligenceAI.App.Views;
@@ -61,33 +63,33 @@ public sealed partial class ChatPage : Page
         // Wait for reasoning engine if still initializing
         if (App.ReasoningEngine == null)
         {
-            var waitBorder = AddMessage("Initializing AI model (first time may take a moment)...", isUser: false);
+            var waitMsg = AddMessage("⏳ Initializing AI model...", isUser: false);
             for (int i = 0; i < 30 && App.ReasoningEngine == null; i++)
                 await Task.Delay(500);
 
-            ChatHistory.Children.Remove(waitBorder);
+            ChatHistory.Children.Remove(waitMsg);
 
             if (App.ReasoningEngine == null)
             {
-                AddMessage("AI model not available. Please try again in a moment.", isUser: false);
+                AddMessage("❌ AI model not available. Please try again.", isUser: false);
                 SendButton.IsEnabled = true;
                 return;
             }
         }
 
-        // Add thinking indicator
-        var thinkingBorder = AddMessage("Thinking...", isUser: false);
+        // Show thinking indicator
+        var thinkingMsg = AddMessage("🤔 Thinking... (querying knowledge graph + SLM)", isUser: false);
 
         try
         {
             var result = await App.ReasoningEngine.QueryAsync(question);
 
             // Replace thinking with answer
-            ChatHistory.Children.Remove(thinkingBorder);
+            ChatHistory.Children.Remove(thinkingMsg);
             AddMessage(result.Answer, isUser: false);
 
             // Add sources footnote
-            if (result.Sources.Count > 0)
+            if (result.Sources?.Count > 0)
             {
                 var sourcesText = new TextBlock
                 {
@@ -101,8 +103,8 @@ public sealed partial class ChatPage : Page
         }
         catch (Exception ex)
         {
-            ChatHistory.Children.Remove(thinkingBorder);
-            AddMessage($"Error: {ex.Message}", isUser: false);
+            ChatHistory.Children.Remove(thinkingMsg);
+            AddMessage($"❌ Error: {ex.Message}", isUser: false);
         }
         finally
         {
@@ -117,22 +119,27 @@ public sealed partial class ChatPage : Page
     {
         var border = new Border
         {
-            Background = isUser
-                ? (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AccentFillColorDefaultBrush"]
-                : (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"],
             CornerRadius = new CornerRadius(12),
             Padding = new Thickness(16, 12, 16, 12),
             HorizontalAlignment = isUser ? HorizontalAlignment.Right : HorizontalAlignment.Left,
-            MaxWidth = 600
+            MaxWidth = 600,
+            Margin = new Thickness(0, 4, 0, 4)
         };
+
+        if (isUser)
+        {
+            border.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 0, 100, 200));
+        }
+        else
+        {
+            border.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 40, 40, 40));
+        }
 
         var textBlock = new TextBlock
         {
             Text = text,
             TextWrapping = TextWrapping.Wrap,
-            Foreground = isUser
-                ? (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"]
-                : null
+            Foreground = new SolidColorBrush(Colors.White)
         };
 
         border.Child = textBlock;
