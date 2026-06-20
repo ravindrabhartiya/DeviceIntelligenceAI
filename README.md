@@ -32,7 +32,7 @@ A WinUI 3 app + MCP server that builds and maintains a semantic knowledge graph 
 └────────────────────┘           └──────────────────────────┘
          ↓
 ┌──────────────────────────────────────────────────────────────────┐
-│ Device Intelligence MCP (existing @ C:\PC Health MCP)            │
+│ device-intelligence-mcp (github.com/ravindrabhartiya/...)        │
 │ WMI · EventLog · CBS · Registry · Performance Counters           │
 └──────────────────────────────────────────────────────────────────┘
 ```
