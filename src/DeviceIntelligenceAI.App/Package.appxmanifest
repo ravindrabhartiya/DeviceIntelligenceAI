@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity
+    Name="DeviceIntelligenceAI"
+    Publisher="CN=DeviceIntelligenceAI"
+    Version="1.0.0.0" />
+
+  <mp:PhoneIdentity PhoneProductId="a1b2c3d4-e5f6-7890-abcd-ef1234567890" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>Device Intelligence AI</DisplayName>
+    <PublisherDisplayName>Device Intelligence</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22621.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$">
+
+      <uap:VisualElements
+        DisplayName="Device Intelligence AI"
+        Description="Semantic knowledge graph for your Windows device"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+
+      <!-- App Actions: discoverable via Windows Search and Copilot -->
+      <Extensions>
+        <uap:Extension Category="windows.appActions">
+          <uap:AppActions>
+            <uap:AppAction
+              Id="check-health"
+              DisplayName="Check device health"
+              Description="Get a natural language summary of your device's health"
+              Arguments="action=check-health" />
+            <uap:AppAction
+              Id="explain-update-failure"
+              DisplayName="Explain update failure"
+              Description="Diagnose and explain why the last Windows update failed"
+              Arguments="action=explain-update-failure" />
+            <uap:AppAction
+              Id="update-readiness"
+              DisplayName="Is it safe to update?"
+              Description="Assess whether your device is ready for Windows updates"
+              Arguments="action=update-readiness" />
+            <uap:AppAction
+              Id="show-servicing-state"
+              DisplayName="Show servicing pipeline"
+              Description="Visualize the current Windows servicing state as a diagram"
+              Arguments="action=show-servicing-state" />
+            <uap:AppAction
+              Id="what-changed"
+              DisplayName="What changed recently?"
+              Description="See what changed on your device in the past week"
+              Arguments="action=what-changed" />
+            <uap:AppAction
+              Id="diagnose-slow"
+              DisplayName="Diagnose slow device"
+              Description="Investigate why your device feels slow"
+              Arguments="action=diagnose-slow" />
+          </uap:AppActions>
+        </uap:Extension>
+      </Extensions>
+
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="systemaimodels" />
+  </Capabilities>
+</Package>

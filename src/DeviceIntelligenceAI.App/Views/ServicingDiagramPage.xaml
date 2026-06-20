@@ -1,0 +1,51 @@
+<Page
+    x:Class="DeviceIntelligenceAI.App.Views.ServicingDiagramPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DeviceIntelligenceAI.App.Views">
+
+    <Grid Padding="24" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock Text="Servicing Pipeline" Style="{StaticResource TitleTextBlockStyle}" />
+            <TextBlock Text="Windows Update servicing state visualized as a diagram"
+                       Opacity="0.6" />
+        </StackPanel>
+
+        <!-- Diagram Output -->
+        <ScrollViewer Grid.Row="1">
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="20" MaxWidth="900">
+                <StackPanel Spacing="12">
+                    <TextBlock x:Name="DiagramStatus" Text="Click 'Generate' to visualize the servicing pipeline" Opacity="0.6" />
+                    <TextBox x:Name="MermaidCode"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             FontFamily="Cascadia Code, Consolas"
+                             FontSize="13"
+                             MinHeight="300"
+                             Visibility="Collapsed" />
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <!-- Actions -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+            <Button x:Name="GenerateButton"
+                    Content="Generate Diagram"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Click="Generate_Click" />
+            <Button x:Name="CopyButton"
+                    Content="Copy Mermaid Code"
+                    Click="Copy_Click"
+                    Visibility="Collapsed" />
+        </StackPanel>
+    </Grid>
+</Page>

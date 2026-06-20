@@ -1,0 +1,22 @@
+<Window
+    x:Class="DeviceIntelligenceAI.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DeviceIntelligenceAI.App">
+
+    <NavigationView
+        x:Name="NavView"
+        IsBackButtonVisible="Collapsed"
+        PaneDisplayMode="Left"
+        SelectionChanged="NavigationView_SelectionChanged">
+
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Dashboard" Tag="dashboard" Icon="Home" IsSelected="True" />
+            <NavigationViewItem Content="Ask" Tag="chat" Icon="Message" />
+            <NavigationViewItem Content="Servicing" Tag="servicing" Icon="Setting" />
+            <NavigationViewItem Content="Timeline" Tag="timeline" Icon="Clock" />
+        </NavigationView.MenuItems>
+
+        <Frame x:Name="ContentFrame" />
+    </NavigationView>
+</Window>

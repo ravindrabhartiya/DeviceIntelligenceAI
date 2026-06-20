@@ -1,0 +1,79 @@
+<Page
+    x:Class="DeviceIntelligenceAI.App.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DeviceIntelligenceAI.App.Views">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="16" MaxWidth="800">
+            <!-- Header -->
+            <TextBlock Text="Device Intelligence" Style="{StaticResource TitleTextBlockStyle}" />
+            <TextBlock Text="Semantic knowledge graph for your Windows device"
+                       Style="{StaticResource SubtitleTextBlockStyle}" Opacity="0.7" />
+
+            <!-- Health Summary Card -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Health Summary" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock x:Name="HealthSummaryText"
+                               Text="Loading..."
+                               TextWrapping="Wrap"
+                               Opacity="0.8" />
+                    <Button x:Name="RefreshHealthButton" Content="Refresh" Click="RefreshHealth_Click" />
+                </StackPanel>
+            </Border>
+
+            <!-- Graph Stats Card -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Knowledge Graph" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <Grid ColumnSpacing="24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock x:Name="EntityCountText" Text="0" FontSize="32" FontWeight="Bold" />
+                            <TextBlock Text="Entities" Opacity="0.6" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Name="EdgeCountText" Text="0" FontSize="32" FontWeight="Bold" />
+                            <TextBlock Text="Edges" Opacity="0.6" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock x:Name="FactCountText" Text="0" FontSize="32" FontWeight="Bold" />
+                            <TextBlock Text="Facts" Opacity="0.6" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Quick Actions -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="8" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Quick Actions" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="Is it safe to update?" Click="UpdateRisk_Click" />
+                        <Button Content="Why did update fail?" Click="ExplainFailure_Click" />
+                        <Button Content="What changed?" Click="WhatChanged_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Result -->
+            <Border x:Name="ResultCard"
+                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                    CornerRadius="8" Padding="20" Visibility="Collapsed">
+                <StackPanel Spacing="8">
+                    <TextBlock x:Name="ResultTitle" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock x:Name="ResultText" TextWrapping="Wrap" />
+                    <TextBlock x:Name="ResultSources" Opacity="0.5" FontSize="12" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
