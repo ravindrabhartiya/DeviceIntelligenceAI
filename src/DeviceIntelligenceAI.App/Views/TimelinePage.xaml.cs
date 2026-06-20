@@ -40,14 +40,10 @@ public sealed partial class TimelinePage : Page
 
         try
         {
-            // Load narrative
             var from = DateTimeOffset.UtcNow.AddDays(-_days);
             var to = DateTimeOffset.UtcNow;
 
-            var narrative = await App.ReasoningEngine!.NarrateTimelineAsync(from, to);
-            NarrativeText.Text = narrative.Answer;
-
-            // Load recent entities from graph
+            // Load recent entities from the graph first — independent of the LLM.
             var entities = App.GraphStore?.GetEntitiesInTimeRange(from, to);
             if (entities != null)
             {
@@ -79,6 +75,19 @@ public sealed partial class TimelinePage : Page
                     EntitiesList.Children.Add(item);
                 }
             }
+
+            // Narrative needs the reasoning engine, which initializes asynchronously.
+            var engine = await App.WaitForReasoningEngineAsync();
+            if (engine == null)
+            {
+                NarrativeText.Text = App.CoreServicesReady
+                    ? "AI model still initializing. Click Refresh in a moment."
+                    : App.StartupError ?? "Core services failed to initialize.";
+                return;
+            }
+
+            var narrative = await engine.NarrateTimelineAsync(from, to);
+            NarrativeText.Text = narrative.Answer;
         }
         catch (Exception ex)
         {

@@ -29,10 +29,9 @@ public static class Program
         _semanticIndexer = new SemanticIndexer(_graphStore, _semanticIndex);
         _ingester = new IncrementalIngester(_graphStore);
 
-        // Use mock LLM for now — will be replaced by WindowsLanguageModel on Copilot+ PCs
-        ILanguageModel llm = WindowsLanguageModel.IsAvailable()
-            ? await WindowsLanguageModel.CreateAsync()
-            : new MockLanguageModel();
+        // Select the best available LLM: Phi Silica (Windows AI) → Ollama → Mock
+        var (llm, backend) = await LanguageModelFactory.CreateAsync();
+        await Console.Error.WriteLineAsync($"[device-intelligence-ai] LLM backend: {backend}");
 
         _reasoningEngine = new ReasoningEngine(_semanticIndex, llm, _graphStore);
 

@@ -61,17 +61,20 @@ public sealed partial class ChatPage : Page
         SendButton.IsEnabled = false;
 
         // Wait for reasoning engine if still initializing
-        if (App.ReasoningEngine == null)
+        var engine = App.ReasoningEngine;
+        if (engine == null)
         {
             var waitMsg = AddMessage("⏳ Initializing AI model...", isUser: false);
-            for (int i = 0; i < 30 && App.ReasoningEngine == null; i++)
-                await Task.Delay(500);
-
+            engine = await App.WaitForReasoningEngineAsync();
             ChatHistory.Children.Remove(waitMsg);
 
-            if (App.ReasoningEngine == null)
+            if (engine == null)
             {
-                AddMessage("❌ AI model not available. Please try again.", isUser: false);
+                AddMessage(
+                    App.CoreServicesReady
+                        ? "❌ AI model not available. Please try again."
+                        : App.StartupError ?? "❌ Core services failed to initialize.",
+                    isUser: false);
                 SendButton.IsEnabled = true;
                 return;
             }
@@ -82,7 +85,7 @@ public sealed partial class ChatPage : Page
 
         try
         {
-            var result = await App.ReasoningEngine.QueryAsync(question);
+            var result = await engine.QueryAsync(question);
 
             // Replace thinking with answer
             ChatHistory.Children.Remove(thinkingMsg);

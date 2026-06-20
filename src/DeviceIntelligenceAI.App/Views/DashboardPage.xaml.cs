@@ -43,22 +43,18 @@ public sealed partial class DashboardPage : Page
     {
         try
         {
-            // Wait for async LLM initialization
-            if (App.ReasoningEngine == null)
+            HealthSummaryText.Text = "⏳ Initializing AI model...";
+            var engine = await App.WaitForReasoningEngineAsync();
+            if (engine == null)
             {
-                HealthSummaryText.Text = "⏳ Initializing AI model...";
-                for (int i = 0; i < 30 && App.ReasoningEngine == null; i++)
-                    await Task.Delay(500);
-
-                if (App.ReasoningEngine == null)
-                {
-                    HealthSummaryText.Text = "AI model still initializing. Click 'Refresh from Device' when ready.";
-                    return;
-                }
+                HealthSummaryText.Text = App.CoreServicesReady
+                    ? "AI model still initializing. Click 'Refresh from Device' when ready."
+                    : App.StartupError ?? "Core services failed to initialize.";
+                return;
             }
 
             HealthSummaryText.Text = "🤔 Generating health summary...";
-            var result = await App.ReasoningEngine.GetHealthSummaryAsync();
+            var result = await engine.GetHealthSummaryAsync();
             HealthSummaryText.Text = result.Answer;
         }
         catch (Exception ex)
@@ -194,20 +190,20 @@ public sealed partial class DashboardPage : Page
 
     private async void UpdateRisk_Click(object sender, RoutedEventArgs e)
     {
-        await RunAction("Update Risk Assessment", () => App.ReasoningEngine!.PredictUpdateRiskAsync());
+        await RunAction("Update Risk Assessment", engine => engine.PredictUpdateRiskAsync());
     }
 
     private async void ExplainFailure_Click(object sender, RoutedEventArgs e)
     {
-        await RunAction("Update Failure Explanation", () => App.ReasoningEngine!.ExplainUpdateFailureAsync());
+        await RunAction("Update Failure Explanation", engine => engine.ExplainUpdateFailureAsync());
     }
 
     private async void WhatChanged_Click(object sender, RoutedEventArgs e)
     {
-        await RunAction("Recent Changes", () => App.ReasoningEngine!.NarrateTimelineAsync());
+        await RunAction("Recent Changes", engine => engine.NarrateTimelineAsync());
     }
 
-    private async Task RunAction(string title, Func<Task<Reasoning.ReasoningResult>> action)
+    private async Task RunAction(string title, Func<Reasoning.ReasoningEngine, Task<Reasoning.ReasoningResult>> action)
     {
         ResultCard.Visibility = Visibility.Visible;
         ResultTitle.Text = title;
@@ -216,7 +212,16 @@ public sealed partial class DashboardPage : Page
 
         try
         {
-            var result = await action();
+            var engine = await App.WaitForReasoningEngineAsync();
+            if (engine == null)
+            {
+                ResultText.Text = App.CoreServicesReady
+                    ? "AI model still initializing. Please try again in a moment."
+                    : App.StartupError ?? "Core services failed to initialize.";
+                return;
+            }
+
+            var result = await action(engine);
             ResultText.Text = result.Answer;
             ResultSources.Text = result.Sources.Count > 0
                 ? $"Based on {result.RetrievedFactCount} facts | Template: {result.TemplateName}"
