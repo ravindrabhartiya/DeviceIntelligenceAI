@@ -58,16 +58,33 @@ public sealed partial class ChatPage : Page
         QueryInput.Text = "";
         SendButton.IsEnabled = false;
 
+        // Wait for reasoning engine if still initializing
+        if (App.ReasoningEngine == null)
+        {
+            var waitBorder = AddMessage("Initializing AI model (first time may take a moment)...", isUser: false);
+            for (int i = 0; i < 30 && App.ReasoningEngine == null; i++)
+                await Task.Delay(500);
+
+            ChatHistory.Children.Remove(waitBorder);
+
+            if (App.ReasoningEngine == null)
+            {
+                AddMessage("AI model not available. Please try again in a moment.", isUser: false);
+                SendButton.IsEnabled = true;
+                return;
+            }
+        }
+
         // Add thinking indicator
         var thinkingBorder = AddMessage("Thinking...", isUser: false);
 
         try
         {
-            var result = await App.ReasoningEngine!.QueryAsync(question);
+            var result = await App.ReasoningEngine.QueryAsync(question);
 
             // Replace thinking with answer
             ChatHistory.Children.Remove(thinkingBorder);
-            var answerBorder = AddMessage(result.Answer, isUser: false);
+            AddMessage(result.Answer, isUser: false);
 
             // Add sources footnote
             if (result.Sources.Count > 0)
