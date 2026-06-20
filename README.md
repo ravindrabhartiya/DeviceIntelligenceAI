@@ -186,7 +186,7 @@ tests/
 - .NET 8 SDK
 - Windows 11 (Build 22621+)
 - Windows App SDK 1.6+ (for WinUI app)
-- [Device Intelligence MCP](https://github.com/ravindrabhartiya) at `C:\PC Health MCP` (for live ingestion)
+- [Device Intelligence MCP](https://github.com/ravindrabhartiya/device-intelligence-mcp) server built and available on PATH (for live ingestion)
 
 ## License
 
