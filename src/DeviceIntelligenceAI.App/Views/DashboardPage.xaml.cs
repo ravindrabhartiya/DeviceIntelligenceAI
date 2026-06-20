@@ -43,12 +43,21 @@ public sealed partial class DashboardPage : Page
     {
         try
         {
+            // Wait for async LLM initialization
             if (App.ReasoningEngine == null)
             {
-                HealthSummaryText.Text = "Reasoning engine not initialized.";
-                return;
+                HealthSummaryText.Text = "⏳ Initializing AI model...";
+                for (int i = 0; i < 30 && App.ReasoningEngine == null; i++)
+                    await Task.Delay(500);
+
+                if (App.ReasoningEngine == null)
+                {
+                    HealthSummaryText.Text = "AI model still initializing. Click 'Refresh from Device' when ready.";
+                    return;
+                }
             }
 
+            HealthSummaryText.Text = "🤔 Generating health summary...";
             var result = await App.ReasoningEngine.GetHealthSummaryAsync();
             HealthSummaryText.Text = result.Answer;
         }
