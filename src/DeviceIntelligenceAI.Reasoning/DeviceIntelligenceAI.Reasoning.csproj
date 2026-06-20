@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DeviceIntelligenceAI.Graph\DeviceIntelligenceAI.Graph.csproj" />
+    <ProjectReference Include="..\DeviceIntelligenceAI.Ingestion\DeviceIntelligenceAI.Ingestion.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -9,5 +10,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="PromptTemplates\*.md" />
+  </ItemGroup>
 
 </Project>

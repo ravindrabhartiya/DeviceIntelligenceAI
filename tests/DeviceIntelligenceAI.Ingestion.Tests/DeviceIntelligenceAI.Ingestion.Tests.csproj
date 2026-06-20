@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DeviceIntelligenceAI.Ingestion\DeviceIntelligenceAI.Ingestion.csproj" />
     <ProjectReference Include="..\..\src\DeviceIntelligenceAI.Graph\DeviceIntelligenceAI.Graph.csproj" />
+    <ProjectReference Include="..\..\src\DeviceIntelligenceAI.Reasoning\DeviceIntelligenceAI.Reasoning.csproj" />
   </ItemGroup>
 
 </Project>
