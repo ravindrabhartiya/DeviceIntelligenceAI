@@ -45,11 +45,17 @@ public sealed class RagPipeline
 
         if (facts.Count == 0)
         {
+            // No facts found, but still send to LLM with a general device context prompt
+            var generalPrompt = $"You are a Windows device assistant. The user asked: \"{question}\"\n\n" +
+                "No specific facts were retrieved from the knowledge graph for this query. " +
+                "Respond helpfully. If the question is about the device, suggest they run a refresh to ingest device data first.";
+            var generalAnswer = await _languageModel.GenerateAsync(generalPrompt, ct);
+
             return new ReasoningResult
             {
-                Answer = "I don't have enough information to answer this question. No relevant facts were found in the device knowledge graph.",
+                Answer = generalAnswer,
                 Sources = Array.Empty<SemanticSearchResult>(),
-                TemplateName = options.TemplateName,
+                TemplateName = options.TemplateName ?? "general",
                 RetrievedFactCount = 0
             };
         }
