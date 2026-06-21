@@ -234,8 +234,11 @@ public sealed class GraphStore : IDisposable
     {
         using var cmd = _connection.CreateCommand();
         cmd.CommandText = """
-            INSERT OR IGNORE INTO facts (id, entity_id, fact_text, observed_at, snapshot_id, indexed)
+            INSERT INTO facts (id, entity_id, fact_text, observed_at, snapshot_id, indexed)
             VALUES (@id, @entityId, @factText, @observedAt, @snapshotId, 0)
+            ON CONFLICT(id) DO UPDATE SET
+                observed_at = @observedAt,
+                snapshot_id = @snapshotId
             """;
         cmd.Parameters.AddWithValue("@id", id);
         cmd.Parameters.AddWithValue("@entityId", entityId);
@@ -243,6 +246,29 @@ public sealed class GraphStore : IDisposable
         cmd.Parameters.AddWithValue("@observedAt", observedAt.ToString("o"));
         cmd.Parameters.AddWithValue("@snapshotId", snapshotId ?? (object)DBNull.Value);
         cmd.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Get all persisted facts regardless of their indexed flag. Used to rehydrate the
+    /// in-memory semantic index from SQLite on startup.
+    /// </summary>
+    public IReadOnlyList<(string Id, string EntityId, string FactText, DateTimeOffset ObservedAt)> GetAllFacts()
+    {
+        using var cmd = _connection.CreateCommand();
+        cmd.CommandText = "SELECT id, entity_id, fact_text, observed_at FROM facts ORDER BY observed_at DESC";
+
+        var results = new List<(string, string, string, DateTimeOffset)>();
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            results.Add((
+                reader.GetString(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                DateTimeOffset.Parse(reader.GetString(3))
+            ));
+        }
+        return results;
     }
 
     public IReadOnlyList<(string Id, string EntityId, string FactText, DateTimeOffset ObservedAt)> GetUnindexedFacts(int limit = 100)

@@ -25,9 +25,16 @@ public static class Program
 
         var dbPath = GetDatabasePath();
         _graphStore = new GraphStore(dbPath);
+        // Enforce the 30-day rolling window on startup.
+        _graphStore.PruneOlderThan(DateTimeOffset.UtcNow.AddDays(-30));
         _semanticIndex = SemanticIndexFactory.Create(forceLocal: !WindowsSemanticIndex.IsAvailable());
         _semanticIndexer = new SemanticIndexer(_graphStore, _semanticIndex);
         _ingester = new IncrementalIngester(_graphStore);
+
+        // Rehydrate the in-memory semantic index from persisted facts so queries are grounded
+        // immediately after restart without requiring a fresh ingestion.
+        var rehydrated = await _semanticIndexer.RehydrateAsync();
+        await Console.Error.WriteLineAsync($"[device-intelligence-ai] Rehydrated {rehydrated} facts into semantic index.");
 
         // Select the best available LLM: Phi Silica (Windows AI) → Ollama → Mock
         var (llm, backend) = await LanguageModelFactory.CreateAsync();

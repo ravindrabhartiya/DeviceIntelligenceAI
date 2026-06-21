@@ -51,6 +51,23 @@ public sealed class SemanticIndexer
     }
 
     /// <summary>
+    /// Rebuild the in-memory semantic index from all persisted graph facts, independent of
+    /// the per-fact "indexed" flag. The semantic index is not durable across process
+    /// restarts, so this must run on startup; otherwise retrieval returns no facts even
+    /// though the graph is fully populated. Indexing is idempotent for both backends.
+    /// Returns the number of facts rehydrated.
+    /// </summary>
+    public async Task<int> RehydrateAsync(CancellationToken ct = default)
+    {
+        var allFacts = _graphStore.GetAllFacts();
+        if (allFacts.Count == 0) return 0;
+
+        var facts = allFacts.Select(f => new SemanticFact(f.Id, f.FactText, f.ObservedAt, f.EntityId)).ToList();
+        await _semanticIndex.IndexFactsBatchAsync(facts, ct);
+        return facts.Count;
+    }
+
+    /// <summary>
     /// Query the semantic index with a natural language question.
     /// </summary>
     public Task<IReadOnlyList<SemanticSearchResult>> SearchAsync(string query, int maxResults = 10, CancellationToken ct = default)

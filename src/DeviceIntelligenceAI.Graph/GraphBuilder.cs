@@ -382,7 +382,9 @@ public sealed class GraphBuilder
 
     private void EmitFact(string entityId, string factText, DateTimeOffset observedAt)
     {
-        var factId = $"fact:{DeterministicId(factText + observedAt.ToString("o"))}";
+        // Content-based ID (entity + text, no timestamp) so re-scans dedup instead of
+        // appending near-duplicate rows. InsertFact upserts observed_at on conflict.
+        var factId = $"fact:{DeterministicId(entityId + "|" + factText)}";
         _store.InsertFact(factId, entityId, factText, observedAt);
         _generatedFacts.Add(factId);
     }

@@ -161,6 +161,38 @@ public class GraphStoreTests : IDisposable
         Assert.NotNull(_store.GetEntity("new1"));
     }
 
+    [Fact]
+    public void GetAllFacts_ReturnsFactsRegardlessOfIndexedFlag()
+    {
+        _store.UpsertEntity(new GraphEntity { Id = "e1", Type = EntityTypes.Update, Label = "U1", FirstSeen = DateTimeOffset.UtcNow, LastSeen = DateTimeOffset.UtcNow });
+        _store.InsertFact("f1", "e1", "Update KB123 was installed", DateTimeOffset.UtcNow);
+        _store.InsertFact("f2", "e1", "Update KB456 failed", DateTimeOffset.UtcNow);
+
+        // Mark one indexed; GetAllFacts must still return both (unlike GetUnindexedFacts).
+        _store.MarkFactsIndexed(new[] { "f1" });
+
+        var all = _store.GetAllFacts();
+        Assert.Equal(2, all.Count);
+        Assert.Single(_store.GetUnindexedFacts());
+    }
+
+    [Fact]
+    public void InsertFact_UpsertsObservedAtOnDuplicateId()
+    {
+        _store.UpsertEntity(new GraphEntity { Id = "e1", Type = EntityTypes.Update, Label = "U1", FirstSeen = DateTimeOffset.UtcNow, LastSeen = DateTimeOffset.UtcNow });
+
+        var first = DateTimeOffset.UtcNow.AddDays(-1);
+        var second = DateTimeOffset.UtcNow;
+        _store.InsertFact("fdup", "e1", "Same fact text", first);
+        _store.InsertFact("fdup", "e1", "Same fact text", second);
+
+        // Re-inserting the same id must not create a second row...
+        var all = _store.GetAllFacts();
+        Assert.Single(all);
+        // ...and must refresh observed_at to the latest observation.
+        Assert.Equal(second.ToUnixTimeSeconds(), all[0].ObservedAt.ToUnixTimeSeconds());
+    }
+
     public void Dispose()
     {
         _store.Dispose();

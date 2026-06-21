@@ -87,6 +87,34 @@ public class SemanticIndexerTests : IDisposable
         Assert.Equal(statsBefore.TotalFacts, statsAfter.IndexedFacts);
     }
 
+    [Fact]
+    public async Task RehydrateAsync_MakesPersistedFactsSearchableOnFreshIndex()
+    {
+        // Simulate a restart: facts are persisted in the graph and already marked indexed,
+        // but the in-memory semantic index is brand new (empty).
+        var builder = new GraphBuilder(_store);
+        var twin = JsonDocument.Parse(SampleTwinJson);
+        builder.BuildFromDeviceTwin(twin, DateTimeOffset.UtcNow);
+        await _indexer.IndexAllPendingAsync();
+        _store.MarkFactsIndexed(_store.GetAllFacts().Select(f => f.Id)); // ensure all flagged indexed
+
+        // New process: fresh empty index + indexer over the same persisted graph.
+        using var freshIndex = new LocalSemanticIndex();
+        var freshIndexer = new SemanticIndexer(_store, freshIndex);
+
+        // IndexAllPendingAsync alone would index nothing (everything is already indexed=1).
+        var pending = await freshIndexer.IndexAllPendingAsync();
+        Assert.Equal(0, pending);
+        Assert.Empty(await freshIndexer.SearchAsync("update failed"));
+
+        // Rehydration rebuilds the in-memory index from persisted facts.
+        var rehydrated = await freshIndexer.RehydrateAsync();
+        Assert.True(rehydrated > 0);
+
+        var results = await freshIndexer.SearchAsync("update failed");
+        Assert.NotEmpty(results);
+    }
+
     private const string SampleTwinJson = """
     {
         "inventory": {

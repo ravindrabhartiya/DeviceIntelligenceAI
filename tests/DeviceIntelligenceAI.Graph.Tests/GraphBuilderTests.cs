@@ -56,6 +56,21 @@ public class GraphBuilderTests : IDisposable
     }
 
     [Fact]
+    public void BuildFromDeviceTwin_RescanDoesNotDuplicateStableFacts()
+    {
+        // Ingesting the same twin twice (different observed times) must dedup content-stable
+        // facts (drivers, updates, etc.) instead of appending near-duplicate rows per scan.
+        _builder.BuildFromDeviceTwin(CreateSampleTwin(), DateTimeOffset.UtcNow.AddHours(-1));
+        _builder.BuildFromDeviceTwin(CreateSampleTwin(), DateTimeOffset.UtcNow);
+
+        var driverFacts = _store.GetAllFacts().Where(f => f.FactText.Contains("Intel UHD")).ToList();
+        Assert.Single(driverFacts);
+
+        var updateFacts = _store.GetAllFacts().Where(f => f.FactText.Contains("KB5034441")).ToList();
+        Assert.Single(updateFacts);
+    }
+
+    [Fact]
     public void BuildFromDeviceTwin_ProcessesFailures()
     {
         var twin = CreateSampleTwin();

@@ -54,6 +54,8 @@ public partial class App : Application
         {
             var dbPath = GetDatabasePath();
             GraphStore = new GraphStore(dbPath);
+            // Enforce the 30-day rolling window on startup.
+            GraphStore.PruneOlderThan(DateTimeOffset.UtcNow.AddDays(-30));
             SemanticIndex = SemanticIndexFactory.Create(forceLocal: !WindowsSemanticIndex.IsAvailable());
             CoreServicesReady = true;
         }
@@ -73,6 +75,18 @@ public partial class App : Application
 
         try
         {
+            // Rehydrate the in-memory semantic index from persisted facts so prior device
+            // data is searchable without re-running a scan.
+            try
+            {
+                var rehydrated = await new SemanticIndexer(GraphStore, SemanticIndex).RehydrateAsync();
+                System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] Rehydrated {rehydrated} facts into semantic index.");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] Index rehydration failed: {ex.Message}");
+            }
+
             var (llm, backend) = await LanguageModelFactory.CreateAsync();
             System.Diagnostics.Debug.WriteLine($"[DeviceIntelligenceAI] LLM backend: {backend}");
             _reasoningEngine = new ReasoningEngine(SemanticIndex, llm, GraphStore);

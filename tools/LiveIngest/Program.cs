@@ -65,7 +65,10 @@ Console.ResetColor();
 Console.Write("  [4/5] Building semantic index... ");
 var index = SemanticIndexFactory.Create();
 var indexer = new SemanticIndexer(store, index);
-var indexed = await indexer.IndexAllPendingAsync();
+await indexer.IndexAllPendingAsync();
+// Rehydrate the full persisted fact set so every prior fact is searchable in this session,
+// not just the ones newly ingested above.
+var indexed = await indexer.RehydrateAsync();
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine($"✓ ({indexed} facts indexed)");
 Console.ResetColor();
