@@ -104,6 +104,10 @@
                     CornerRadius="8" Padding="20" Visibility="Collapsed">
                 <StackPanel Spacing="8">
                     <TextBlock x:Name="ResultTitle" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <StackPanel x:Name="ResultStatusPanel" Orientation="Horizontal" Spacing="8" Visibility="Collapsed">
+                        <ProgressRing x:Name="ResultProgress" IsActive="False" Width="16" Height="16" />
+                        <TextBlock x:Name="ResultStatus" Opacity="0.7" FontSize="12" VerticalAlignment="Center" />
+                    </StackPanel>
                     <TextBlock x:Name="ResultText" TextWrapping="Wrap" />
                     <TextBlock x:Name="ResultSources" Opacity="0.5" FontSize="12" TextWrapping="Wrap" />
                 </StackPanel>

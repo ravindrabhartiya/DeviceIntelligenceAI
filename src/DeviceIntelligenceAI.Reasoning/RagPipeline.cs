@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using DeviceIntelligenceAI.Ingestion.SemanticIndex;
 
 namespace DeviceIntelligenceAI.Reasoning;
@@ -98,6 +99,54 @@ public sealed class RagPipeline
         };
     }
 
+    /// <summary>
+    /// Streaming variant of <see cref="AnswerAsync"/>. Retrieves facts, emits a single
+    /// metadata event (sources + template) first, then yields generation chunks as they
+    /// arrive so the UI can render incremental output and elapsed-time feedback.
+    /// </summary>
+    public async IAsyncEnumerable<RagStreamEvent> AnswerStreamAsync(string question, ReasoningOptions? options = null, [EnumeratorCancellation] CancellationToken ct = default)
+    {
+        options ??= new ReasoningOptions();
+
+        // Step 1: Retrieve relevant facts (same logic as AnswerAsync).
+        IReadOnlyList<SemanticSearchResult> facts;
+        if (options.TimeRangeFrom.HasValue && options.TimeRangeTo.HasValue)
+        {
+            facts = await _semanticIndex.QueryInTimeRangeAsync(
+                question, options.TimeRangeFrom.Value, options.TimeRangeTo.Value, options.MaxRetrievedFacts, ct);
+        }
+        else
+        {
+            facts = await _semanticIndex.QueryAsync(question, options.MaxRetrievedFacts, ct);
+        }
+
+        // Step 2: Build the prompt (with retrieved context, or a general fallback).
+        string prompt;
+        string templateName;
+        if (facts.Count == 0)
+        {
+            templateName = options.TemplateName ?? "general";
+            prompt = $"You are a Windows device assistant. The user asked: \"{question}\"\n\n" +
+                "No specific facts were retrieved from the knowledge graph for this query. " +
+                "Respond helpfully. If the question is about the device, suggest they run a refresh to ingest device data first.";
+        }
+        else
+        {
+            var context = BuildContext(facts);
+            templateName = options.TemplateName ?? InferTemplate(question);
+            prompt = _templates.Render(templateName, context);
+        }
+
+        // Step 3: Emit metadata up front so the UI can show source/fact counts immediately.
+        yield return RagStreamEvent.Meta(facts, templateName);
+
+        // Step 4: Stream the generated response.
+        await foreach (var chunk in _languageModel.GenerateStreamAsync(prompt, ct).WithCancellation(ct))
+        {
+            yield return RagStreamEvent.Chunk(chunk);
+        }
+    }
+
     private static string BuildContext(IReadOnlyList<SemanticSearchResult> facts)
     {
         var lines = facts.Select((f, i) =>
@@ -150,4 +199,27 @@ public sealed class ReasoningResult
     public string? TemplateName { get; init; }
     public int RetrievedFactCount { get; init; }
     public int ContextTokenEstimate { get; init; }
+}
+
+/// <summary>
+/// An incremental event emitted by <see cref="RagPipeline.AnswerStreamAsync"/>.
+/// The first event is metadata (sources/template); subsequent events carry text chunks.
+/// </summary>
+public sealed class RagStreamEvent
+{
+    public bool IsMetadata { get; init; }
+    public IReadOnlyList<SemanticSearchResult>? Sources { get; init; }
+    public string? TemplateName { get; init; }
+    public int RetrievedFactCount { get; init; }
+    public string? TextChunk { get; init; }
+
+    public static RagStreamEvent Meta(IReadOnlyList<SemanticSearchResult> facts, string templateName) => new()
+    {
+        IsMetadata = true,
+        Sources = facts,
+        TemplateName = templateName,
+        RetrievedFactCount = facts.Count
+    };
+
+    public static RagStreamEvent Chunk(string text) => new() { TextChunk = text };
 }

@@ -17,6 +17,13 @@ public interface ILanguageModel : IDisposable
     Task<string> GenerateAsync(string systemPrompt, string userPrompt, CancellationToken ct = default);
 
     /// <summary>
+    /// Stream a response token/chunk at a time so callers can surface incremental
+    /// output (and elapsed-time feedback) instead of blocking on the full result.
+    /// Backends without native streaming yield the complete response as a single chunk.
+    /// </summary>
+    IAsyncEnumerable<string> GenerateStreamAsync(string prompt, CancellationToken ct = default);
+
+    /// <summary>
     /// Check if the model is ready for inference.
     /// </summary>
     Task<bool> IsReadyAsync(CancellationToken ct = default);

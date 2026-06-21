@@ -1,4 +1,6 @@
+using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
@@ -51,8 +53,56 @@ public sealed class OllamaLanguageModel : ILanguageModel
         return response.GetProperty("response").GetString() ?? "";
     }
 
-    public async Task<bool> IsReadyAsync(CancellationToken ct = default)
+    public async IAsyncEnumerable<string> GenerateStreamAsync(string prompt, [EnumeratorCancellation] CancellationToken ct = default)
     {
+        var request = new
+        {
+            model = _model,
+            prompt,
+            stream = true,
+            options = new { temperature = 0.3, num_predict = 512 }
+        };
+
+        var json = JsonSerializer.Serialize(request);
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/generate") { Content = content };
+
+        using var response = await _httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, ct);
+        response.EnsureSuccessStatusCode();
+
+        using var stream = await response.Content.ReadAsStreamAsync(ct);
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var line = await reader.ReadLineAsync(ct);
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            string? chunk = null;
+            bool done = false;
+            try
+            {
+                using var doc = JsonDocument.Parse(line);
+                if (doc.RootElement.TryGetProperty("response", out var responseProp))
+                    chunk = responseProp.GetString();
+                if (doc.RootElement.TryGetProperty("done", out var doneProp) && doneProp.ValueKind == JsonValueKind.True)
+                    done = true;
+            }
+            catch (JsonException)
+            {
+                continue; // Skip malformed lines defensively.
+            }
+
+            if (!string.IsNullOrEmpty(chunk))
+                yield return chunk!;
+            if (done)
+                yield break;
+        }
+    }
+
+    public async Task<bool> IsReadyAsync(CancellationToken ct = default)    {
         try
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/api/tags", ct);

@@ -41,6 +41,17 @@ public sealed class MockLanguageModel : ILanguageModel
 
     public Task<bool> IsReadyAsync(CancellationToken ct = default) => Task.FromResult(true);
 
+    public async IAsyncEnumerable<string> GenerateStreamAsync(string prompt, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct = default)
+    {
+        var full = await GenerateAsync(prompt, ct);
+        foreach (var word in full.Split(' '))
+        {
+            ct.ThrowIfCancellationRequested();
+            await Task.Delay(35, ct);
+            yield return word + " ";
+        }
+    }
+
     public void Dispose() { }
 
     private static string GenerateDefaultResponse(string prompt)

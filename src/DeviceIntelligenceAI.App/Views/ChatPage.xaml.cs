@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Text;
+using System.Threading;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -51,6 +54,8 @@ public sealed partial class ChatPage : Page
         await SendQuery(QueryInput.Text);
     }
 
+    private CancellationTokenSource? _chatCts;
+
     private async Task SendQuery(string question)
     {
         if (string.IsNullOrWhiteSpace(question)) return;
@@ -80,23 +85,57 @@ public sealed partial class ChatPage : Page
             }
         }
 
-        // Show thinking indicator
-        var thinkingMsg = AddMessage("🤔 Thinking... (querying knowledge graph + SLM)", isUser: false);
+        // Cancel any in-flight query; cap each run so a slow/stuck model can't hang forever.
+        _chatCts?.Cancel();
+        _chatCts = new CancellationTokenSource(TimeSpan.FromSeconds(120));
+        var ct = _chatCts.Token;
+
+        // Streaming answer bubble with a live elapsed-time indicator until the first token.
+        var answerBubble = AddMessage("🤔 Thinking… 0s", isUser: false);
+        var answerText = (TextBlock)answerBubble.Child;
+
+        var sw = Stopwatch.StartNew();
+        var sb = new StringBuilder();
+        var factCount = 0;
+        var template = "";
+        var gotChunk = false;
+
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+        timer.Tick += (_, _) =>
+        {
+            if (!gotChunk)
+                answerText.Text = $"🤔 Thinking… {sw.Elapsed.TotalSeconds:F0}s";
+        };
+        timer.Start();
 
         try
         {
-            var result = await engine.QueryAsync(question);
+            await foreach (var ev in engine.StreamQueryAsync(question, ct).WithCancellation(ct))
+            {
+                if (ev.IsMetadata)
+                {
+                    factCount = ev.RetrievedFactCount;
+                    template = ev.TemplateName ?? "";
+                    continue;
+                }
 
-            // Replace thinking with answer
-            ChatHistory.Children.Remove(thinkingMsg);
-            AddMessage(result.Answer, isUser: false);
+                if (!string.IsNullOrEmpty(ev.TextChunk))
+                {
+                    if (!gotChunk) { gotChunk = true; answerText.Text = ""; }
+                    sb.Append(ev.TextChunk);
+                    answerText.Text = sb.ToString();
+                    ChatScrollViewer.ChangeView(null, ChatScrollViewer.ScrollableHeight, null);
+                }
+            }
 
-            // Add sources footnote
-            if (result.Sources?.Count > 0)
+            if (sb.Length == 0)
+                answerText.Text = "No response was generated.";
+
+            if (factCount > 0)
             {
                 var sourcesText = new TextBlock
                 {
-                    Text = $"📎 Based on {result.RetrievedFactCount} facts ({result.TemplateName})",
+                    Text = $"📎 Based on {factCount} facts ({template}) · {sw.Elapsed.TotalSeconds:F1}s",
                     FontSize = 11,
                     Opacity = 0.5,
                     Margin = new Thickness(12, -8, 12, 0)
@@ -104,13 +143,20 @@ public sealed partial class ChatPage : Page
                 ChatHistory.Children.Add(sourcesText);
             }
         }
+        catch (OperationCanceledException)
+        {
+            answerText.Text = sb.Length > 0
+                ? sb + "\n\n[Stopped — the response was taking too long.]"
+                : "⏱️ The request timed out. The local model may be slow — try again, or set a smaller model via the DEVICE_AI_MODEL environment variable.";
+        }
         catch (Exception ex)
         {
-            ChatHistory.Children.Remove(thinkingMsg);
-            AddMessage($"❌ Error: {ex.Message}", isUser: false);
+            answerText.Text = $"❌ Error: {ex.Message}";
         }
         finally
         {
+            timer.Stop();
+            sw.Stop();
             SendButton.IsEnabled = true;
         }
 

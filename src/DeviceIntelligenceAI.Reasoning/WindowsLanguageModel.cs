@@ -78,6 +78,19 @@ public sealed class WindowsLanguageModel : ILanguageModel
         return Task.FromResult(_initialized && _model != null);
     }
 
+    public async IAsyncEnumerable<string> GenerateStreamAsync(string prompt, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct = default)
+    {
+        // Phi Silica streaming via the dynamic WCR API is not wired up here; yield the
+        // full response as a single chunk so callers still get a uniform streaming contract.
+        // The underlying WinRT call doesn't observe the token, so race it against the token
+        // to guarantee the caller's timeout/cancellation is honored at the await boundary.
+        EnsureInitialized();
+        var genTask = GenerateAsync(prompt, ct);
+        await Task.WhenAny(genTask, Task.Delay(Timeout.Infinite, ct));
+        ct.ThrowIfCancellationRequested();
+        yield return await genTask;
+    }
+
     private void EnsureInitialized()
     {
         if (!_initialized || _model == null)

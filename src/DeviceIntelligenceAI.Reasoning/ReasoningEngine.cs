@@ -166,6 +166,51 @@ public sealed class ReasoningEngine
         _cache.InvalidateAll();
     }
 
+    // --- Streaming variants -------------------------------------------------
+    // These bypass the insight cache and stream incremental output so the UI can
+    // render tokens as they arrive (and show elapsed-time feedback) rather than
+    // blocking on the full result.
+
+    /// <summary>Stream a free-form question answer (template inferred from the question).</summary>
+    public IAsyncEnumerable<RagStreamEvent> StreamQueryAsync(string question, CancellationToken ct = default) =>
+        _rag.AnswerStreamAsync(question, null, ct);
+
+    /// <summary>Stream a device health summary.</summary>
+    public IAsyncEnumerable<RagStreamEvent> StreamHealthSummaryAsync(CancellationToken ct = default) =>
+        _rag.AnswerStreamAsync("Summarize the current device health state",
+            new ReasoningOptions { TemplateName = "SummarizeHealth", MaxRetrievedFacts = 20 }, ct);
+
+    /// <summary>Stream an assessment of whether it is safe to update.</summary>
+    public IAsyncEnumerable<RagStreamEvent> StreamUpdateRiskAsync(CancellationToken ct = default) =>
+        _rag.AnswerStreamAsync("Is it safe to install Windows updates right now? What are the risks?",
+            new ReasoningOptions { TemplateName = "PredictRisk", MaxRetrievedFacts = 20 }, ct);
+
+    /// <summary>Stream an explanation of the most recent update failure.</summary>
+    public IAsyncEnumerable<RagStreamEvent> StreamUpdateFailureAsync(string? kbId = null, CancellationToken ct = default)
+    {
+        var question = kbId != null
+            ? $"Why did update {kbId} fail? What was the error and how to fix it?"
+            : "Why did the most recent Windows update fail? What was the error and how to fix it?";
+        return _rag.AnswerStreamAsync(question,
+            new ReasoningOptions { TemplateName = "ExplainFailure", MaxRetrievedFacts = 15 }, ct);
+    }
+
+    /// <summary>Stream a narration of what changed on the device over a time period.</summary>
+    public IAsyncEnumerable<RagStreamEvent> StreamTimelineAsync(DateTimeOffset? from = null, DateTimeOffset? to = null, CancellationToken ct = default)
+    {
+        from ??= DateTimeOffset.UtcNow.AddDays(-7);
+        to ??= DateTimeOffset.UtcNow;
+        return _rag.AnswerStreamAsync(
+            $"What happened on this device between {from:yyyy-MM-dd} and {to:yyyy-MM-dd}?",
+            new ReasoningOptions
+            {
+                TemplateName = "NarrateTimeline",
+                MaxRetrievedFacts = 25,
+                TimeRangeFrom = from,
+                TimeRangeTo = to
+            }, ct);
+    }
+
     /// <summary>
     /// Get all currently cached insights.
     /// </summary>

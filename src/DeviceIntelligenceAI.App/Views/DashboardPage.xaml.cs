@@ -1,9 +1,12 @@
 using System.Diagnostics;
+using System.Text;
+using System.Threading;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using DeviceIntelligenceAI.Ingestion;
 using DeviceIntelligenceAI.Ingestion.McpClient;
 using DeviceIntelligenceAI.Ingestion.SemanticIndex;
+using DeviceIntelligenceAI.Reasoning;
 
 namespace DeviceIntelligenceAI.App.Views;
 
@@ -188,27 +191,49 @@ public sealed partial class DashboardPage : Page
         IngestionStatusText.Text = "";
     }
 
+    private CancellationTokenSource? _actionCts;
+
     private async void UpdateRisk_Click(object sender, RoutedEventArgs e)
     {
-        await RunAction("Update Risk Assessment", engine => engine.PredictUpdateRiskAsync());
+        await RunStreamedAction("Update Risk Assessment", (engine, ct) => engine.StreamUpdateRiskAsync(ct));
     }
 
     private async void ExplainFailure_Click(object sender, RoutedEventArgs e)
     {
-        await RunAction("Update Failure Explanation", engine => engine.ExplainUpdateFailureAsync());
+        await RunStreamedAction("Update Failure Explanation", (engine, ct) => engine.StreamUpdateFailureAsync(ct: ct));
     }
 
     private async void WhatChanged_Click(object sender, RoutedEventArgs e)
     {
-        await RunAction("Recent Changes", engine => engine.NarrateTimelineAsync());
+        await RunStreamedAction("Recent Changes", (engine, ct) => engine.StreamTimelineAsync(ct: ct));
     }
 
-    private async Task RunAction(string title, Func<Reasoning.ReasoningEngine, Task<Reasoning.ReasoningResult>> action)
+    private async Task RunStreamedAction(
+        string title,
+        Func<Reasoning.ReasoningEngine, CancellationToken, IAsyncEnumerable<RagStreamEvent>> action)
     {
+        // Cancel any in-flight action; cap each run so a slow/stuck model can't hang forever.
+        _actionCts?.Cancel();
+        _actionCts = new CancellationTokenSource(TimeSpan.FromSeconds(120));
+        var ct = _actionCts.Token;
+
         ResultCard.Visibility = Visibility.Visible;
         ResultTitle.Text = title;
-        ResultText.Text = "Thinking...";
+        ResultText.Text = "";
         ResultSources.Text = "";
+        ResultStatusPanel.Visibility = Visibility.Visible;
+        ResultProgress.IsActive = true;
+
+        var sw = Stopwatch.StartNew();
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+        var phase = "Thinking";
+        timer.Tick += (_, _) => ResultStatus.Text = $"{phase}… {sw.Elapsed.TotalSeconds:F0}s elapsed";
+        ResultStatus.Text = "Thinking… 0s elapsed";
+        timer.Start();
+
+        var sb = new StringBuilder();
+        var factCount = 0;
+        var template = "";
 
         try
         {
@@ -221,15 +246,47 @@ public sealed partial class DashboardPage : Page
                 return;
             }
 
-            var result = await action(engine);
-            ResultText.Text = result.Answer;
-            ResultSources.Text = result.Sources.Count > 0
-                ? $"Based on {result.RetrievedFactCount} facts | Template: {result.TemplateName}"
-                : "No evidence found";
+            await foreach (var ev in action(engine, ct).WithCancellation(ct))
+            {
+                if (ev.IsMetadata)
+                {
+                    factCount = ev.RetrievedFactCount;
+                    template = ev.TemplateName ?? "";
+                    phase = factCount > 0 ? $"Reading {factCount} facts" : "Generating";
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(ev.TextChunk))
+                {
+                    phase = "Generating";
+                    sb.Append(ev.TextChunk);
+                    ResultText.Text = sb.ToString();
+                }
+            }
+
+            if (sb.Length == 0)
+                ResultText.Text = "No response was generated.";
+
+            ResultSources.Text = factCount > 0
+                ? $"Based on {factCount} facts | Template: {template} | {sw.Elapsed.TotalSeconds:F1}s"
+                : $"No evidence found | {sw.Elapsed.TotalSeconds:F1}s";
+        }
+        catch (OperationCanceledException)
+        {
+            ResultText.Text = sb.Length > 0
+                ? sb + "\n\n[Stopped — the response was taking too long.]"
+                : "The request timed out. The local model may be slow — try again, or set a smaller model via the DEVICE_AI_MODEL environment variable.";
         }
         catch (Exception ex)
         {
             ResultText.Text = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            timer.Stop();
+            sw.Stop();
+            ResultProgress.IsActive = false;
+            ResultStatusPanel.Visibility = Visibility.Collapsed;
         }
     }
 

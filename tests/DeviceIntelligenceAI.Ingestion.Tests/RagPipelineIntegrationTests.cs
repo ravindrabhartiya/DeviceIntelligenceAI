@@ -132,6 +132,62 @@ public class RagPipelineIntegrationTests : IDisposable
         Assert.True(promptCountAfter > promptCountBefore);
     }
 
+    [Fact]
+    public async Task StreamQueryAsync_EmitsMetadataThenChunks_ReassemblesToAnswer()
+    {
+        await IngestSampleTwin();
+
+        RagStreamEvent? firstEvent = null;
+        var chunkCount = 0;
+        var assembled = new System.Text.StringBuilder();
+        var factCount = 0;
+
+        await foreach (var ev in _engine.StreamQueryAsync("Why did the update fail?"))
+        {
+            firstEvent ??= ev;
+            if (ev.IsMetadata)
+            {
+                factCount = ev.RetrievedFactCount;
+            }
+            else if (ev.TextChunk != null)
+            {
+                chunkCount++;
+                assembled.Append(ev.TextChunk);
+            }
+        }
+
+        // The first event must be metadata carrying the retrieved-fact count/sources.
+        Assert.NotNull(firstEvent);
+        Assert.True(firstEvent!.IsMetadata);
+        Assert.True(factCount > 0);
+
+        // The mock streams word-by-word, so we should see multiple incremental chunks.
+        Assert.True(chunkCount > 1);
+        Assert.NotEmpty(assembled.ToString().Trim());
+    }
+
+    [Fact]
+    public async Task StreamUpdateRiskAsync_StreamedAnswerMatchesNonStreamedAnswer()
+    {
+        await IngestSampleTwin();
+
+        var nonStreamed = await _engine.PredictUpdateRiskAsync();
+
+        var assembled = new System.Text.StringBuilder();
+        await foreach (var ev in _engine.StreamUpdateRiskAsync())
+        {
+            if (ev.TextChunk != null) assembled.Append(ev.TextChunk);
+        }
+
+        // Mock chunking adds trailing spaces between words; compare normalized text.
+        Assert.Equal(
+            Normalize(nonStreamed.Answer),
+            Normalize(assembled.ToString()));
+    }
+
+    private static string Normalize(string s) =>
+        string.Join(' ', s.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+
     private const string SampleTwin = """
     {
         "inventory": {
